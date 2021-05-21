@@ -1,22 +1,83 @@
-// todos
-// "Async created" was here before, does it really have to be used?? Await was also used
-// Fix delay between body and themer div
 <template>
 <div id="themer" :class="{'theme-dark': lightMode}">
     <div class="toggles">
       <i class="fas fa-sun sun" v-if="lightMode" @click="lightMode = !lightMode"></i>
       <i class="fas fa-moon" v-else @click="lightMode = !lightMode"></i>
     </div>
+
+    <div class="Title">
+      <h1 class="title">Memeder</h1>
+    </div>
+    <section>
+      <div class="wave2 water"></div>
+      <div class="wave3 water"></div>
+      <div class="wave water"></div>
+    </section>
+
     <div class="centered">
-      <div v-if="!Object.keys(gif).length">
-        <h3 class="flex flex-box justify-center">loading...</h3>
+      <div class="flex flex-col justify-center" id="fixed-layered">
+        <div class="flex flex-row justify-center" id="fixed-layered">
+          <button
+            class="section-btn"
+            @click="changeSection('tinder')"
+          >
+            Home
+          </button>
+          <button
+            class="disliked-btn"
+            @click="changeSection('disliked')"
+          >
+            Disliked
+          </button>
+          <button
+            class="liked-btn"
+            @click="changeSection('liked')"
+          >
+            Liked
+          </button>
+        </div>
       </div>
-      <div v-else class="flex">
-        <img :src="gif.images.original.url" alt="" class="display-img" id="" />
+      <div v-if="section === 'liked'" class="overflow-scroll flex flex-col">
+        <div v-if="likedGifs.length === 0">
+          <h2 class="no-liked">
+          No Liked Gifs😢</h2>
+        </div>
+        <div
+        v-else
+        v-for="likedGif in likedGifs.slice().reverse()"
+        v-bind:key="likedGif"
+        >
+          <a :href="likedGif.images.original.url">
+            <img :src="likedGif.images.original.url" class="display-img2">
+          </a>
+        </div>
       </div>
-      <div class="buttons">
-        <button class="text-6xl btn right" @click="swipeRight">✔️</button>
-        <button class="text-6xl btn left" @click="swipeLeft">❌</button>
+      <div v-else-if="section === 'disliked'" class="overflow-scroll flex flex-col">
+        <div v-if="dislikedGifs.length === 0">
+          <h2 class="no-disliked">
+          No Disliked Gifs😞</h2>
+        </div>
+        <div
+        v-else
+        v-for="dislikedGif in dislikedGifs.slice().reverse()"
+        v-bind:key="dislikedGif"
+        >
+          <a :href="dislikedGif.images.original.url">
+            <img :src="dislikedGif.images.original.url" class="display-img2">
+          </a>
+        </div>
+      </div>
+      <div v-else>
+        <div v-if="!Object.keys(gif).length">
+          <h3 class="flex flex-box justify-center">loading...</h3>
+        </div>
+        <div v-else class="flex">
+          <img :src="gif.images.original.url" alt="" class="display-img" id="" />
+        </div>
+        <div class="buttons">
+          <button class="text-6xl btn left" @click="swipeLeft">❌</button>
+          <button class="text-6xl btn right" @click="swipeRight">✔️</button>
+        </div>
       </div>
     </div>
   </div>
@@ -39,6 +100,7 @@ export default {
       root: null,
       theme: '',
       lightMode: false,
+      section: 'tinder',
     };
   },
   watch: {
@@ -56,6 +118,10 @@ export default {
       const { data: gif } = await gf.random({ tag: 'meme' });
       this.gif = gif;
       console.log(gif);
+    },
+
+    changeSection(section) {
+      this.section = section;
     },
 
     gifIsNotSaved(gifArray, currentGifId) {
@@ -106,21 +172,107 @@ body {
   position: absolute;
   transition: all .2s;
 
-  i {
-    position: absolute;
-    top: 1em;
-    left: 1em;
-    font-size: 50px;
-  }
-
   .sun {
     color: #ffe65b;
   }
 
   &.theme-dark {
-    color: #333;
+    color: rgb(255, 255, 255);
     background-color: white;
   }
+
+  .toggles {
+    position: relative;
+    top: 0.5em;
+    left: 1em;
+    font-size: 50px;
+    width: 60px;
+    height: 60px;
+    z-index: 2;
+  }
+}
+
+.liked-btn {
+    margin: 40px;
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.2s;
+    background-color: #5bff69;
+    font-size: 20px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.226);
+}
+
+.liked-btn:hover {
+    border: 2px solid rgba(0, 0, 0, 0.205);
+    font-size: 28px;
+}
+
+.disliked-btn {
+    margin: 40px;
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.2s;
+    background-color: #FF665B;
+    font-size: 20px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.226);
+}
+
+.disliked-btn:hover {
+    border: 2px solid rgba(0, 0, 0, 0.205);
+    font-size: 28px;
+}
+
+.section-btn {
+    margin: 40px;
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.2s;
+    background: linear-gradient(90deg, rgba(255,88,100,1) 0%, rgba(255,159,91,1) 100%);
+    font-size: 20px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.226);
+}
+
+.section-btn:hover {
+    border: 2px solid rgba(0, 0, 0, 0.637);
+    font-size: 28px;
+}
+
+#fixed-layered {
+  z-index: 90000;
+  margin-top: 10em;
+}
+
+.no-liked {
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 1px 4px 4px rgba(0,0,0,0.6);
+}
+
+.no-disliked {
+  margin-bottom: 30em;
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 1px 4px 4px rgba(0,0,0,0.6);
+}
+
+.title {
+  position: absolute;
+  top: 0.5em;
+  right: 1em;
+  background: linear-gradient(90deg, rgba(255,88,100,1) 0%, rgba(255,159,91,1) 100%);
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: 28px;
+  text-shadow: 1px 4px 4px rgba(0,0,0,0.6);
 }
 
 </style>
